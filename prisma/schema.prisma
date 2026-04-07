@@ -1,0 +1,195 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+// Tables
+model User {
+  id            String   @id @default(uuid())
+  role          UserRole @default(USER)
+  googleId      String?  @map("google_id")
+  email         String   @unique
+  picUrl        String?  @map("pic_url")
+  hashPassword  String?  @map("hash_password")
+  pointsBalance Int      @default(0) @map("points_balance")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  redeems  RedeemHistory[]
+  rewards  Reward[]
+  routines Routine[]
+  tasks    Task[]
+  projects Project[]
+
+  @@map("user")
+}
+
+// Gamification
+model Reward {
+  id          String  @id @default(uuid())
+  title       String
+  pointsToGet Int     @map("points_to_get")
+  isActive    Boolean @default(true) @map("is_active")
+
+  // Relationships
+  // User
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @map("user_id")
+
+  // Redeems
+  redeems RedeemHistory[]
+
+  @@unique([userId, title])
+  @@map("reward")
+}
+
+model RedeemHistory {
+  id          String   @id @default(uuid())
+  redeemDate  DateTime @default(now()) @map("redeem_date")
+  spentPoints Int      @map("spent_points")
+
+  // Relationships
+  // User
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @map("user_id")
+
+  // Reward
+  reward   Reward @relation(fields: [rewardId], references: [id])
+  rewardId String @map("reward_id")
+
+  @@map("redeem_history")
+}
+
+// Routine and project
+model Routine {
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relationship
+  // User
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @map("user_id")
+
+  // Middle table with task
+  routineTasks RoutineTask[]
+
+  @@unique([userId, name])
+  @@map("routine")
+}
+
+model Project {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  limitDate   DateTime @map("limit_date")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // Relationships
+  // User
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @map("user_id")
+
+  // Task
+  tasks Task[]
+
+  // Kanban Columns
+  columns KanbanColumn[]
+
+  @@unique([userId, title])
+  @@map("project")
+}
+
+enum TaskType {
+  RECURRENT
+  UNIQUE
+}
+
+model Task {
+  id              String   @id @default(uuid())
+  title           String
+  type            TaskType @default(RECURRENT)
+  generatedPoints Int      @map("generated_points")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  // Relationships
+  // User
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @map("user_id")
+
+  // Project
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String?  @map("project_id")
+
+  // Middle table with task
+  routineTasks RoutineTask[]
+
+  // Completition
+  registers DailyRegister[]
+
+  // Kanban Column
+  column   KanbanColumn? @relation(fields: [columnId], references: [id])
+  columnId String?       @map("column_id")
+
+  @@unique([projectId, title])
+  @@map("task")
+}
+
+// Middle table
+model RoutineTask {
+  // Routine
+  routine   Routine @relation(fields: [routineId], references: [id], onDelete: Cascade)
+  routineId String  @map("routine_id")
+
+  // Task
+  task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  taskId String @map("task_id")
+
+  @@id([routineId, taskId])
+  @@map("routine_task")
+}
+
+model DailyRegister {
+  id           String   @id @default(uuid())
+  registerDate DateTime @default(now()) @map("register_date")
+  isDone       Boolean  @default(false) @map("is_done")
+  obs          String?
+
+  // Task
+  task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  taskId String @map("task_id")
+
+  @@map("daily_register")
+}
+
+model KanbanColumn {
+  id    String @id @default(uuid())
+  name  String
+  order Int
+
+  // Relationships
+  // Project
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String  @map("project_id")
+
+  // Task
+  tasks Task[]
+
+  @@unique([projectId, name])
+  @@map("kanban_column")
+}
