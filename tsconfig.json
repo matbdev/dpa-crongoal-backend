@@ -5,9 +5,12 @@
     "moduleResolution": "bundler",
     "outDir": "./dist",
     "rootDir": "./",
-    "strict": true, 
+    "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true
   },
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }

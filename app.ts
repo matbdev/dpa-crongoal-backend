@@ -1,8 +1,18 @@
-import { Request, Response } from "express";
+import express, { Request, Response } from "express";
+import authRoute from './routes/authRoute'
+import userRoute from './routes/userRoute'
+import passport from 'passport';
 
-const express = require('express');
 const app = express();
 const PORT = 5000;
+
+app.use(passport.initialize());
+
+// authRoute
+app.use('/api/oauth', authRoute);
+
+// userRoute
+app.use('/api/user', userRoute);
 
 // Health check route
 app.get('/health', (req: Request, res: Response) => {
@@ -13,11 +23,7 @@ app.get('/health', (req: Request, res: Response) => {
   });
 });
 
+// Starts the server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
-
-/*
-Importe o seu auth.routes.ts e anexe-o à instância principal do Hono.
-Agora o seu servidor já sabe escutar as rotas de autenticação.
-*/

@@ -23,11 +23,14 @@ model User {
   role          UserRole @default(USER)
   googleId      String?  @map("google_id")
   email         String   @unique
+  fullName      String   @map("full_name")
+  displayName   String?  @map("display_name")
   picUrl        String?  @map("pic_url")
   hashPassword  String?  @map("hash_password")
   pointsBalance Int      @default(0) @map("points_balance")
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")
+  provider      String?
 
   // Relationships
   redeems  RedeemHistory[]
