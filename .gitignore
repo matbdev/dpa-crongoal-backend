@@ -1,3 +1,25 @@
-node_modules
+# Dependencies
+node_modules/
+
+# Environment variables
 .env
-/generated/prisma
+.env.*
+
+# Prisma generated client
+/generated/prisma/
+
+# TypeScript build output
+dist/
+build/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/

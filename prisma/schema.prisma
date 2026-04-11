@@ -17,6 +17,11 @@ enum UserRole {
   ADMIN
 }
 
+enum Theme {
+  DARK
+  LIGHT
+}
+
 // Tables
 model User {
   id            String   @id @default(uuid())
@@ -31,6 +36,7 @@ model User {
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")
   provider      String?
+  theme         Theme    @default(DARK)
 
   // Relationships
   redeems  RedeemHistory[]
@@ -48,6 +54,8 @@ model Reward {
   title       String
   pointsToGet Int     @map("points_to_get")
   isActive    Boolean @default(true) @map("is_active")
+  description String?
+  icon        String?
 
   // Relationships
   // User
@@ -80,11 +88,12 @@ model RedeemHistory {
 
 // Routine and project
 model Routine {
-  id        String   @id @default(uuid())
-  name      String
-  createdAt DateTime @default(now()) @map("created_at")
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
 
-  // Relationship
+  // Relationships
   // User
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String @map("user_id")
@@ -129,6 +138,7 @@ model Task {
   type            TaskType @default(RECURRENT)
   generatedPoints Int      @map("generated_points")
   createdAt       DateTime @default(now()) @map("created_at")
+  description     String?
 
   // Relationships
   // User
@@ -181,9 +191,10 @@ model DailyRegister {
 }
 
 model KanbanColumn {
-  id    String @id @default(uuid())
+  id    String  @id @default(uuid())
   name  String
   order Int
+  color String? @default("#20557dff")
 
   // Relationships
   // Project
