@@ -106,20 +106,126 @@ src/
 └── app.ts                      # Express application entry point
 ```
 
-## API Routes
+## API Reference
 
-The API enforces strict `Bearer Token` authorization on all private module endpoints using customized JWT payloads.
+> All routes (except Auth and Health) require a JWT Bearer token: `Authorization: Bearer <token>`
 
-| Feature Area | Base Route | Description |
-| :--- | :--- | :--- |
-| **Authentication** | `/api/auth` | Triggers Google OAuth authentication callback (`/google`) or Local Traditional Login/Register handling. |
-| **User Profile** | `/api/user` | Manages the authenticated user's private state, profiles, and highly protected `/admin` endpoints. |
-| **Projects** | `/api/project` | Full strict CRUD operations for Project entities that encapsulate their own kanban structure. |
-| **Tasks** | `/api/task` | Manages recurrent and one-off tasks, processes daily completions, and handles drag-and-drop column movements. |
-| **Kanban** | `/api/kanban` | Enables creation, ordering, and structure modification of custom columns inside projects. |
-| **Rewards** | `/api/reward` | Controls gamification rules, creation of personal rewards, and the user's spending/redeeming history. |
-| **Routines** | `/api/routine` | Handles aggregation of repetitive tasks into automated routine blueprints. |
-| **Health** | `/api/health` | Root check verification to quickly validate server status and uptime. |
+<details>
+<summary><strong>Auth</strong> — <code>/api/auth</code> (Public)</summary>
+
+| Method | Endpoint | Description | Body |
+|:--|:--|:--|:--|
+| `GET` | `/google` | Redirects to Google OAuth consent screen | — |
+| `GET` | `/google/callback` | Google callback, returns JWT | — |
+| `POST` | `/login` | Local login | `{ email, password }` |
+| `POST` | `/register` | Create account | `{ email, password (min 8, no sequential numbers, no name parts), fullName }` |
+
+</details>
+
+<details>
+<summary><strong>User</strong> — <code>/api/user</code></summary>
+
+| Method | Endpoint | Description | Body |
+|:--|:--|:--|:--|
+| `GET` | `/` | Get authenticated user's profile | — |
+| `PUT` | `/` | Update profile | `{ displayName?, picUrl?, theme? (DARK/LIGHT) }` |
+| `DELETE` | `/` | Delete account (cascade) | — |
+| `GET` | `/admin/all` | List all users (**ADMIN only**) | — |
+
+</details>
+
+<details>
+<summary><strong>Project</strong> — <code>/api/project</code></summary>
+
+| Method | Endpoint | Description | Body |
+|:--|:--|:--|:--|
+| `GET` | `/` | List user's projects | — |
+| `POST` | `/` | Create project | `{ title (min 3), description?, limitDate (future) }` |
+| `GET` | `/:id` | Get project by ID | — |
+| `PUT` | `/:id` | Update project (all fields optional) | Same as create |
+| `DELETE` | `/:id` | Delete project (cascade) | — |
+
+</details>
+
+<details>
+<summary><strong>Task</strong> — <code>/api/task</code></summary>
+
+| Method | Endpoint | Description | Body |
+|:--|:--|:--|:--|
+| `GET` | `/` | List user's tasks | — |
+| `GET` | `/daily` | List daily completion registers | — |
+| `POST` | `/` | Create task | `{ title, description?, type (UNIQUE/RECURRENT), generatedPoints (int ≥1), columnId? }` |
+| `POST` | `/daily` | Register daily completion | `{ taskId, isDone?, obs? }` |
+| `PUT` | `/move` | Move task to column | `{ id (task), newColumnId }` |
+| `GET` | `/:id` | Get task by ID | — |
+| `PUT` | `/:id` | Update task (all fields optional) | Same as create |
+| `DELETE` | `/:id` | Delete task | — |
+
+</details>
+
+<details>
+<summary><strong>Kanban</strong> — <code>/api/kanban</code></summary>
+
+| Method | Endpoint | Description | Body |
+|:--|:--|:--|:--|
+| `GET` | `/project/:projectId` | List columns by project | — |
+| `POST` | `/` | Create column | `{ name, order (≥0), projectId, color? }` |
+| `GET` | `/:id` | Get column by ID | — |
+| `PUT` | `/:id` | Update column (all fields optional) | Same as create |
+| `DELETE` | `/:id` | Delete column | — |
+
+</details>
+
+<details>
+<summary><strong>Reward</strong> — <code>/api/reward</code></summary>
+
+| Method | Endpoint | Description | Body |
+|:--|:--|:--|:--|
+| `GET` | `/` | List user's rewards | — |
+| `GET` | `/redeems` | List all user's redeem history | — |
+| `POST` | `/` | Create reward | `{ title (min 3), description?, pointsToGet (int ≥1), icon? }` |
+| `GET` | `/:id` | Get reward by ID (includes redeems) | — |
+| `GET` | `/:id/redeems` | List redeems for a reward | — |
+| `POST` | `/:id/redeem` | Redeem reward (deducts points) | `{ spentPoints (int ≥1) }` |
+| `PUT` | `/:id` | Update reward (all fields optional) | Same as create |
+| `DELETE` | `/:id` | Delete reward | — |
+
+</details>
+
+<details>
+<summary><strong>Routine</strong> — <code>/api/routine</code></summary>
+
+| Method | Endpoint | Description | Body |
+|:--|:--|:--|:--|
+| `GET` | `/` | List user's routines | — |
+| `POST` | `/` | Create routine | `{ name (min 3), description? }` |
+| `GET` | `/:id` | Get routine by ID (includes tasks) | — |
+| `PUT` | `/:id` | Update routine (all fields optional) | Same as create |
+| `POST` | `/task` | Add task to routine | `{ taskId }` + params `{ id (routine) }` |
+| `DELETE` | `/task` | Remove task from routine | `{ taskId }` + params `{ id (routine) }` |
+| `DELETE` | `/:id` | Delete routine | — |
+
+</details>
+
+<details>
+<summary><strong>Health</strong> — <code>/api/health</code> (Public)</summary>
+
+| Method | Endpoint | Description |
+|:--|:--|:--|
+| `GET` | `/` | Returns `{ status, message, timestamp }` |
+
+</details>
+
+### Error Responses
+
+| Status | When |
+|:--|:--|
+| `400` | Invalid data, foreign key constraint, or insufficient points |
+| `401` | Missing or invalid JWT |
+| `403` | Requires ADMIN role |
+| `404` | Resource not found |
+| `409` | Duplicate record (unique constraint) |
+| `500` | Internal server error |
 
 ## Roadmap
 - [x] **Phase 1:** Project scaffolding, Express + TypeScript setup, and `src/` directory architecture
