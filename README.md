@@ -17,7 +17,8 @@
 - [Core Features](#core-features)
 - [Architecture & Tech Stack](#architecture--tech-stack)
 - [Project Structure](#project-structure)
-- [API Routes](#api-routes)
+- [Getting Started](#getting-started)
+- [API Reference](#api-reference)
 - [Roadmap](#roadmap)
 
 ## Introduction
@@ -98,6 +99,69 @@ src/
 │   ├── password.ts             # Bcrypt hashing utilities
 │   └── rateLimiter.ts          # Rate limiting configuration
 └── app.ts                      # Express application entry point
+```
+
+## Getting Started
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) (v18+)
+- [PostgreSQL](https://www.postgresql.org/) running locally or via [Docker](https://www.docker.com/)
+- A [Google Cloud Console](https://console.cloud.google.com/) project with OAuth 2.0 credentials (for Google login)
+
+### 1. Clone the repository
+```bash
+git clone https://github.com/your-username/dpa-crongoal-backend.git
+cd dpa-crongoal-backend
+```
+
+### 2. Install dependencies
+```bash
+npm install
+```
+
+### 3. Configure environment variables
+
+Create a `.env` file in the root directory:
+```env
+# Database
+DATABASE_URL="postgresql://user:password@localhost:5432/crongoal"
+
+# JWT
+JWT_SECRET="your-secret-key-here"
+
+# Google OAuth 2.0
+GOOGLE_CLIENT_ID="your-google-client-id"
+GOOGLE_CLIENT_SECRET="your-google-client-secret"
+GOOGLE_CALLBACK_URL="http://localhost:5000/api/auth/google/callback"
+
+# Frontend URL (for CORS)
+FE_BASE_URL="http://localhost:3000"
+
+# Backend URL
+BE_BASE_URL="http://localhost:5000"
+
+# Server
+PORT=5000
+```
+
+### 4. Setup the database
+```bash
+# Generate Prisma Client
+npx prisma generate
+
+# Run migrations
+npx prisma migrate dev
+```
+
+### 5. Run the development server
+```bash
+npm run dev
+```
+
+The API will be available at `http://localhost:5000`. You can verify it by hitting the health endpoint:
+```
+GET http://localhost:5000/api/health
 ```
 
 ## API Reference
