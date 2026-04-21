@@ -24,7 +24,7 @@ export async function localRegister(email: string, password: string, fullName: s
         }
     });
 
-    return user;
+    return generateJwtToken(user);
 }
 
 export async function loginLocal(email: string, password: string) {

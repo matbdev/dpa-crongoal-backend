@@ -12,16 +12,35 @@ export const validate = (schema: z.ZodTypeAny) =>
             }) as any;
 
             // Replace req data with validated/transformed data
-            req.body = validatedData.body;
-            req.query = validatedData.query;
-            req.params = validatedData.params;
+            if (validatedData.body) req.body = validatedData.body;
+
+            if (validatedData.query) {
+                Object.defineProperty(req, 'query', {
+                    value: validatedData.query,
+                    writable: true,
+                    configurable: true,
+                    enumerable: true
+                });
+            }
+
+            if (validatedData.params) {
+                Object.defineProperty(req, 'params', {
+                    value: validatedData.params,
+                    writable: true,
+                    configurable: true,
+                    enumerable: true
+                });
+            }
 
             return next();
         } catch (error) {
             if (error instanceof ZodError) {
                 return res.status(400).json({
                     status: 'fail',
-                    errors: z.treeifyError(error),
+                    errors: error.issues.map((err: any) => ({
+                        path: err.path,
+                        message: err.message
+                    })),
                 });
             }
             return next(error);
