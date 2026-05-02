@@ -98,11 +98,21 @@ export const getAllDailyTasks = async (req: Request, res: Response, next: NextFu
 // Move task to column
 export const moveToColumn = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const user = req.user as User;
-        const task = await TaskService.moveTaskToColumn(req.params.id as string, req.body.newColumnId as string);
-
+        const { taskId, newColumnId } = req.body;
+        const task = await TaskService.moveTaskToColumn(taskId, newColumnId);
         return res.status(200).json(task);
     } catch (error) {
         next(error);
-    };
+    }
 };
+
+// Get Count
+export const getCount = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const user = req.user as User;
+        const count = await TaskService.countTasks(user.id);
+        return res.status(200).json(count);
+    } catch (error) {
+        next(error);
+    }
+}

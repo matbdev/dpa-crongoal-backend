@@ -42,3 +42,10 @@ export const deleteProject = async (id: string, userId: string) => {
         where: { id, userId }
     });
 };
+
+// Get count
+export const countProjects = async (userId: string) => {
+    return await prisma.project.count({
+        where: { userId }
+    });
+}

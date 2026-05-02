@@ -198,6 +198,7 @@ GET http://localhost:5000/api/health
 | Method | Endpoint | Description | Body |
 |:--|:--|:--|:--|
 | `GET` | `/` | List user's projects | — |
+| `GET` | `/count` | Get total number of projects | — |
 | `POST` | `/` | Create project | `{ title (min 3), description?, limitDate (future) }` |
 | `GET` | `/:id` | Get project by ID | — |
 | `PUT` | `/:id` | Update project (all fields optional) | Same as create |
@@ -211,6 +212,7 @@ GET http://localhost:5000/api/health
 | Method | Endpoint | Description | Body |
 |:--|:--|:--|:--|
 | `GET` | `/` | List user's tasks | — |
+| `GET` | `/count` | Get total number of tasks | — |
 | `GET` | `/daily` | List daily completion registers | — |
 | `POST` | `/` | Create task | `{ title, description?, type (UNIQUE/RECURRENT), generatedPoints (int ≥1), columnId? }` |
 | `POST` | `/daily` | Register daily completion | `{ taskId, isDone?, obs? }` |
@@ -240,6 +242,7 @@ GET http://localhost:5000/api/health
 | Method | Endpoint | Description | Body |
 |:--|:--|:--|:--|
 | `GET` | `/` | List user's rewards | — |
+| `GET` | `/count` | Get total number of rewards | — |
 | `GET` | `/redeems` | List all user's redeem history | — |
 | `POST` | `/` | Create reward | `{ title (min 3), description?, pointsToGet (int ≥1), icon? }` |
 | `GET` | `/:id` | Get reward by ID (includes redeems) | — |
@@ -256,6 +259,7 @@ GET http://localhost:5000/api/health
 | Method | Endpoint | Description | Body |
 |:--|:--|:--|:--|
 | `GET` | `/` | List user's routines | — |
+| `GET` | `/count` | Get total number of routines | — |
 | `POST` | `/` | Create routine | `{ name (min 3), description? }` |
 | `GET` | `/:id` | Get routine by ID (includes tasks) | — |
 | `PUT` | `/:id` | Update routine (all fields optional) | Same as create |

@@ -14,6 +14,7 @@ router.use(requireJwt);
 // Delegates the request to the controller
 router.get('/', RewardController.getAll);
 router.get('/redeems', RewardController.getAllRedeems);
+router.get('/count', RewardController.getCount);
 router.get('/:id/redeems', validate(getRewardByIdSchema), RewardController.getAllRedeemsByReward);
 router.get('/:id', validate(getRewardByIdSchema), RewardController.getById);
 router.post('/', validate(createRewardSchema), RewardController.create);

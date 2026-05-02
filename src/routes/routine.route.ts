@@ -13,6 +13,7 @@ router.use(requireJwt);
 // Routes
 // Delegates the request to the controller
 router.get('/', RoutineController.getAll);
+router.get('/count', RoutineController.getCount);
 router.get('/:id', validate(getRoutineByIdSchema), RoutineController.getById);
 router.post('/', validate(createRoutineSchema), RoutineController.create);
 router.put('/:id', validate(updateRoutineSchema), RoutineController.update);

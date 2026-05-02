@@ -66,3 +66,14 @@ export const remove = async (req: Request, res: Response, next: NextFunction) =>
         next(error);
     }
 };
+
+// Get Count
+export const getCount = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const user = req.user as User;
+        const count = await ProjectService.countProjects(user.id);
+        return res.status(200).json(count);
+    } catch (error) {
+        next(error);
+    }
+}

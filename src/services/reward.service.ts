@@ -106,3 +106,10 @@ export const getAllRedeemsByReward = async (rewardId: string, userId: string) =>
         include: { reward: true }
     })
 }
+
+// Count
+export const countRewards = async (userId: string) => {
+    return await prisma.reward.count({
+        where: { userId }
+    });
+};

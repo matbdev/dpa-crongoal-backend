@@ -64,3 +64,10 @@ export const moveTaskToColumn = async (taskId: string, newColumnId: string) => {
         data: { columnId: newColumnId }
     });
 };
+
+// Count
+export const countTasks = async (userId: string) => {
+    return await prisma.task.count({
+        where: { userId }
+    });
+};

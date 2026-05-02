@@ -14,6 +14,7 @@ router.use(requireJwt);
 // Delegates the request to the controller
 router.get('/', TaskController.getAll);
 router.get('/daily', TaskController.getAllDailyTasks);
+router.get('/count', TaskController.getCount);
 router.get('/:id', validate(getTaskByIdSchema), TaskController.getById);
 router.post('/', validate(createTaskSchema), TaskController.create);
 router.post('/daily', validate(createDailyRegisterSchema), TaskController.createDailyRegister);

@@ -66,3 +66,10 @@ export const deleteRoutine = async (id: string, userId: string) => {
         where: { id, userId }
     });
 };
+
+// Count
+export const countRoutines = async (userId: string) => {
+    return await prisma.routine.count({
+        where: { userId }
+    });
+};

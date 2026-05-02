@@ -12,6 +12,7 @@ router.use(requireJwt);
 
 // Routes
 // Delegates the request to the controller
+router.get('/count', ProjectController.getCount);
 router.get('/', ProjectController.getAll);
 router.post('/', validate(createProjectSchema), ProjectController.create);
 
