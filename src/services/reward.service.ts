@@ -1,10 +1,14 @@
 import { prisma } from '../config/prisma';
 import { Prisma } from '../../generated/prisma/client';
 import { AppError } from '../utils/AppError';
+import * as UploadService from './file.service';
+
+const bucketName = 'crongoal-bucket';
 
 // Create
 export const createReward = async (data: Prisma.RewardUncheckedCreateInput) => {
-    return await prisma.reward.create({ data });
+    const reward = await prisma.reward.create({ data });
+    return reward;
 };
 
 // Get all rewards by user
@@ -22,6 +26,24 @@ export const getRewardById = async (id: string, userId: string) => {
 
 // Update
 export const updateReward = async (id: string, userId: string, data: Prisma.RewardUncheckedUpdateInput) => {
+    const reward = await getRewardById(id, userId);
+
+    if (!reward) {
+        throw new AppError('Recompensa não encontrada', 404);
+    }
+
+    const oldIcon = reward.icon;
+    const newIcon = data.icon as string | undefined;
+
+    if (newIcon && newIcon !== oldIcon) {
+        if (oldIcon) {
+            const oldFilePath = oldIcon.split('/').pop();
+            if (oldFilePath) {
+                await UploadService.deleteFile(bucketName, oldFilePath).catch(console.error);
+            }
+        }
+    }
+
     return await prisma.reward.update({
         where: { id, userId },
         data
@@ -30,6 +52,19 @@ export const updateReward = async (id: string, userId: string, data: Prisma.Rewa
 
 // Delete
 export const deleteReward = async (id: string, userId: string) => {
+    const reward = await getRewardById(id, userId);
+
+    if (!reward) {
+        throw new AppError('Recompensa não encontrada', 404);
+    }
+
+    if (reward.icon) {
+        const filePath = reward.icon.split('/').pop();
+        if (filePath) {
+            await UploadService.deleteFile(bucketName, filePath).catch(console.error);
+        }
+    }
+
     return await prisma.reward.delete({
         where: { id, userId }
     });

@@ -10,7 +10,7 @@ export async function localRegister(email: string, password: string, fullName: s
     });
 
     if (existingUser) {
-        throw new Error("The user already exists. Please, log in.");
+        throw new Error("O usuário já existe. Faça login.");
     }
 
     // Create user
@@ -34,14 +34,14 @@ export async function loginLocal(email: string, password: string) {
 
     // Verify if user exists and has a password
     if (!foundUser || !foundUser.hashPassword) {
-        throw new Error("The user was not found or invalid credentials.");
+        throw new Error("O usuário não foi encontrado ou credenciais inválidas.");
     }
 
     // Verify password
     const isUserValid = await checkPassword(password, foundUser.hashPassword);
 
     if (!isUserValid) {
-        throw new Error("Invalid credentials. Please, try again!");
+        throw new Error("Credenciais inválidas. Tente novamente.");
     }
 
     // Generate token

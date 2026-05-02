@@ -8,6 +8,7 @@ import kanbanRoute from './routes/kanbanColumn.route'
 import rewardRoute from './routes/reward.route'
 import routineRoute from './routes/routine.route'
 import healthRoute from './routes/health.route'
+import uploadRoute from './routes/upload.route'
 import { globalErrorHandler } from './middlewares/errorHandler'
 import passport from 'passport';
 import cors from './utils/cors';
@@ -41,6 +42,7 @@ app.use('/api/kanban', kanbanRoute);
 app.use('/api/reward', rewardRoute);
 app.use('/api/routine', routineRoute);
 app.use('/api/health', healthRoute);
+app.use('/api/upload', uploadRoute);
 
 // Global Error Handler
 app.use(globalErrorHandler);
