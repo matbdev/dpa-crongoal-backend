@@ -9,7 +9,7 @@ export const googleCallback = (req: Request, res: Response, next: NextFunction) 
         const authToken = AuthService.handleGoogleCallback(user);
 
         // Redirect to front-end
-        const feBase = process.env.FE_BASE_URL || 'http://localhost:5001';
+        const feBase = `${process.env.FE_BASE_URL}/dashboard` || 'http://localhost:5001/dashboard';
         const redirectUrl = `${feBase}?accessToken=${authToken}`;
 
         return res.redirect(redirectUrl);
@@ -37,8 +37,12 @@ export const localLogin = async (req: Request, res: Response, next: NextFunction
 // Local register
 export const localRegister = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { email, password, fullName } = req.body;
-        const authToken = await AuthService.localRegister(email, password, fullName);
+        const { email, password, fullName, displayName } = req.body;
+        console.log(email)
+        console.log(password)
+        console.log(fullName)
+        console.log(displayName)
+        const authToken = await AuthService.localRegister(email, password, fullName, displayName);
 
         return res.status(201).json({ authToken });
     } catch (error) {

@@ -13,7 +13,11 @@ export const registerSchema = z.object({
             }),
         fullName: z.string()
             .min(2, "Você precisa informar um nome real")
-            .max(150, "Nome muito longo")
+            .max(150, "Nome muito longo"),
+        displayName: z.string()
+            .min(2, "O apelido deve ter no mínimo 2 caracteres")
+            .max(50, "Apelido muito longo")
+            .optional()
     })
 }).refine(
     (data) => {

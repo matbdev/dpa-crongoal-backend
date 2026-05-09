@@ -3,7 +3,7 @@ import { prisma } from "../config/prisma";
 import { hashPassword, checkPassword } from "../utils/password";
 import { generateJwtToken } from "../utils/jwt";
 
-export async function localRegister(email: string, password: string, fullName: string) {
+export async function localRegister(email: string, password: string, fullName: string, displayName: string) {
     // Verify if user already exists
     const existingUser = await prisma.user.findUnique({
         where: { email: email }
@@ -18,9 +18,10 @@ export async function localRegister(email: string, password: string, fullName: s
 
     const user = await prisma.user.create({
         data: {
-            email: email,
+            email,
             hashPassword: hashedPassword,
-            fullName: fullName
+            fullName,
+            displayName
         }
     });
 
