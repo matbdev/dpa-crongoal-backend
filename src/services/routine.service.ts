@@ -3,7 +3,7 @@ import { Prisma } from '../../generated/prisma/client';
 
 // Create
 export const createRoutine = async (data: Prisma.RoutineUncheckedCreateInput, taskIds?: string[]) => {
-    return await prisma.routine.create({
+    const routine = await prisma.routine.create({
         data: {
             ...data,
             // If tasks are already created, connect them to the routine
@@ -14,14 +14,26 @@ export const createRoutine = async (data: Prisma.RoutineUncheckedCreateInput, ta
                     }))
                 }
             })
-        }
+        },
+        include: { routineTasks: true }
     });
+
+    // Mark tasks as RECURRENT when added to a routine
+    if (taskIds && taskIds.length > 0) {
+        await prisma.task.updateMany({
+            where: { id: { in: taskIds } },
+            data: { type: 'RECURRENT' }
+        });
+    }
+
+    return routine;
 };
 
 // Get all routines by user
 export const getAllRoutinesByUser = async (userId: string) => {
     return await prisma.routine.findMany({
-        where: { userId }
+        where: { userId },
+        include: { routineTasks: true }
     });
 };
 
@@ -38,11 +50,32 @@ export const getRoutineById = async (id: string, userId: string) => {
 };
 
 // Update
-export const updateRoutine = async (id: string, userId: string, data: Prisma.RoutineUncheckedUpdateInput) => {
-    return await prisma.routine.update({
+export const updateRoutine = async (id: string, userId: string, data: Prisma.RoutineUncheckedUpdateInput, taskIds?: string[]) => {
+    const routine = await prisma.routine.update({
         where: { id, userId },
-        data
+        data: {
+            ...data,
+            ...(taskIds !== undefined && {
+                routineTasks: {
+                    deleteMany: {},
+                    create: taskIds.map(taskId => ({
+                        task: { connect: { id: taskId } }
+                    }))
+                }
+            })
+        },
+        include: { routineTasks: true }
     });
+
+    // Mark tasks as RECURRENT when added to a routine
+    if (taskIds && taskIds.length > 0) {
+        await prisma.task.updateMany({
+            where: { id: { in: taskIds } },
+            data: { type: 'RECURRENT' }
+        });
+    }
+
+    return routine;
 };
 
 // Add a specific task to a routine

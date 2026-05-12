@@ -72,7 +72,7 @@ export const remove = async (req: Request, res: Response, next: NextFunction) =>
 export const redeem = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const user = req.user as User;
-        const redeemData = { ...req.body, userId: user.id, rewardId: req.params.id };
+        const redeemData = { userId: user.id, rewardId: req.params.id as string, spentPoints: 0 };
         const redeem = await RewardService.redeemReward(redeemData);
 
         return res.status(200).json(redeem);

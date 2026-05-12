@@ -80,7 +80,7 @@ export const redeemReward = async (data: Prisma.RedeemHistoryUncheckedCreateInpu
     }
 
     if (user.pointsBalance < reward.pointsToGet) {
-        throw new AppError('Usuário não tem pontos suficientes', 400);
+        throw new AppError('Pontos insuficientes para resgatar esta recompensa.', 400);
     }
 
     await prisma.user.update({
@@ -88,7 +88,12 @@ export const redeemReward = async (data: Prisma.RedeemHistoryUncheckedCreateInpu
         data: { pointsBalance: user.pointsBalance - reward.pointsToGet }
     });
 
-    return await prisma.redeemHistory.create({ data });
+    return await prisma.redeemHistory.create({
+        data: {
+            ...data,
+            spentPoints: reward.pointsToGet
+        }
+    });
 }
 
 // Get all redeems by user

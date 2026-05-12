@@ -48,6 +48,10 @@ export const getById = async (req: Request, res: Response, next: NextFunction) =
 export const update = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const user = req.user as User;
+        const existing = await TaskService.getTaskById(req.params.id as string, user.id);
+        if (existing?.isCompleted) {
+            throw new AppError('Não é possível editar uma tarefa já concluída.', 400);
+        }
         const task = await TaskService.updateTask(req.params.id as string, user.id, req.body);
 
         return res.status(200).json(task);
@@ -60,6 +64,10 @@ export const update = async (req: Request, res: Response, next: NextFunction) =>
 export const remove = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const user = req.user as User;
+        const existing = await TaskService.getTaskById(req.params.id as string, user.id);
+        if (existing?.isCompleted) {
+            throw new AppError('Não é possível excluir uma tarefa já concluída.', 400);
+        }
         const task = await TaskService.deleteTask(req.params.id as string, user.id);
 
         return res.status(200).json(task);
@@ -72,9 +80,7 @@ export const remove = async (req: Request, res: Response, next: NextFunction) =>
 // Create
 export const createDailyRegister = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const user = req.user as User;
-        const registerData = { ...req.body, userId: user.id };
-        const register = await TaskService.createDailyRegister(registerData);
+        const register = await TaskService.createDailyRegister(req.body);
 
         return res.status(201).json(register);
     } catch (error) {

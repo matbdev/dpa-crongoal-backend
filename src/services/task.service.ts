@@ -9,7 +9,13 @@ export const createTask = async (data: Prisma.TaskUncheckedCreateInput) => {
 // Get all tasks by user
 export const getAllTasksByUser = async (userId: string) => {
     return await prisma.task.findMany({
-        where: { userId }
+        where: { userId },
+        include: {
+            routineTasks: {
+                include: { routine: true }
+            },
+            project: true
+        }
     });
 };
 
@@ -42,10 +48,53 @@ export const deleteTask = async (id: string, userId: string) => {
     });
 };
 
-// Create daily register
+// Create daily register, award points, mark task completed, auto-complete project
 export const createDailyRegister = async (data: Prisma.DailyRegisterUncheckedCreateInput) => {
-    return await prisma.dailyRegister.create({
-        data
+    const task = await prisma.task.findUnique({
+        where: { id: data.taskId },
+        select: { generatedPoints: true, userId: true, projectId: true }
+    });
+
+    if (!task) {
+        throw new Error('Tarefa não encontrada');
+    }
+
+    return await prisma.$transaction(async (tx) => {
+        const register = await tx.dailyRegister.create({ data });
+
+        if (data.isDone) {
+            // Award points to user
+            await tx.user.update({
+                where: { id: task.userId },
+                data: { pointsBalance: { increment: task.generatedPoints } }
+            });
+
+            // Mark task as completed
+            await tx.task.update({
+                where: { id: data.taskId },
+                data: { isCompleted: true }
+            });
+
+            // Auto-complete project if all its tasks are now completed
+            if (task.projectId) {
+                const incompleteTasks = await tx.task.count({
+                    where: {
+                        projectId: task.projectId,
+                        isCompleted: false,
+                        id: { not: data.taskId } // exclude current task (already marked above)
+                    }
+                });
+
+                if (incompleteTasks === 0) {
+                    await tx.project.update({
+                        where: { id: task.projectId },
+                        data: { isCompleted: true }
+                    });
+                }
+            }
+        }
+
+        return register;
     });
 };
 

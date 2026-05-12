@@ -110,6 +110,7 @@ model Project {
   title       String
   description String?
   limitDate   DateTime @map("limit_date")
+  isCompleted Boolean  @default(false) @map("is_completed")
   createdAt   DateTime @default(now()) @map("created_at")
 
   // Relationships
@@ -137,6 +138,7 @@ model Task {
   title           String
   type            TaskType @default(RECURRENT)
   generatedPoints Int      @map("generated_points")
+  isCompleted     Boolean  @default(false) @map("is_completed")
   createdAt       DateTime @default(now()) @map("created_at")
   description     String?
 

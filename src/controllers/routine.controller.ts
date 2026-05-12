@@ -7,10 +7,15 @@ import { AppError } from '../utils/AppError';
 export const create = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const user = req.user as User;
-        const routineData = { ...req.body, userId: user.id };
-        const tasks = req.body.taskIds;
+        const { taskIds, ...restBody } = req.body;
 
-        const routine = await RoutineService.createRoutine(routineData, tasks);
+        if (!taskIds || taskIds.length === 0) {
+            throw new AppError('Uma rotina deve ter ao menos uma tarefa.', 400);
+        }
+
+        const routineData = { ...restBody, userId: user.id };
+
+        const routine = await RoutineService.createRoutine(routineData, taskIds);
 
         return res.status(201).json(routine);
     } catch (error) {
@@ -50,7 +55,13 @@ export const getById = async (req: Request, res: Response, next: NextFunction) =
 export const update = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const user = req.user as User;
-        const routine = await RoutineService.updateRoutine(req.params.id as string, user.id, req.body);
+        const { taskIds, ...restBody } = req.body;
+
+        if (!taskIds || taskIds.length === 0) {
+            throw new AppError('Uma rotina deve ter ao menos uma tarefa.', 400);
+        }
+
+        const routine = await RoutineService.updateRoutine(req.params.id as string, user.id, restBody, taskIds);
 
         return res.status(200).json(routine);
     } catch (error) {
