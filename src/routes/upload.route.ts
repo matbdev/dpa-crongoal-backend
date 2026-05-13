@@ -14,7 +14,6 @@ const upload = multer({
   }
 });
 
-// Create the route indicating that we expect a single file in the 'icon' field
 router.post('/reward-icon', upload.single('icon'), uploadRewardIcon as any);
 
 export default router;
