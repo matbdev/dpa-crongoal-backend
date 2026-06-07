@@ -86,6 +86,7 @@ model Routine {
   id          String   @id @default(uuid())
   name        String
   description String?
+  period      RoutinePeriod @default(DAILY)
   createdAt   DateTime @default(now()) @map("created_at")
 
   // Relationships
@@ -126,6 +127,15 @@ model Project {
 enum TaskType {
   RECURRENT
   UNIQUE
+}
+
+enum RoutinePeriod {
+  DAILY
+  WEEKLY
+  MONTHLY
+  QUARTERLY
+  SEMIANNUAL
+  ANNUAL
 }
 
 model Task {
