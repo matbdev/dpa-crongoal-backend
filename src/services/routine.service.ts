@@ -33,7 +33,15 @@ export const createRoutine = async (data: Prisma.RoutineUncheckedCreateInput, ta
 export const getAllRoutinesByUser = async (userId: string) => {
     return await prisma.routine.findMany({
         where: { userId },
-        include: { routineTasks: true }
+        include: { 
+            routineTasks: {
+                include: { 
+                    task: {
+                        include: { registers: true }
+                    }
+                }
+            } 
+        }
     });
 };
 
@@ -43,7 +51,11 @@ export const getRoutineById = async (id: string, userId: string) => {
         where: { id, userId },
         include: {
             routineTasks: {
-                include: { task: true }
+                include: { 
+                    task: {
+                        include: { registers: true }
+                    } 
+                }
             }
         }
     });

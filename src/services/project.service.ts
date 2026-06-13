@@ -38,7 +38,12 @@ export const getAllProjectsByUser = async (userId: string) => {
 export const getProjectById = async (id: string, userId: string) => {
     return await prisma.project.findUnique({
         where: { id, userId },
-        include: { tasks: true }
+        include: { 
+            tasks: true,
+            columns: {
+                orderBy: { order: 'asc' }
+            }
+        }
     });
 };
 
