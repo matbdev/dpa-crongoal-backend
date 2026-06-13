@@ -5,6 +5,7 @@ export const createTaskSchema = z.object({
         title: z.string().min(1, "É obrigatório informar um título com pelo menos 1 caractere"),
         description: z.string().optional(),
         type: z.enum(["UNIQUE", "RECURRENT"]),
+        status: z.enum(["TODO", "IN_PROGRESS", "DONE"]).optional(),
         generatedPoints: z.number().int().min(1, "É obrigatório informar um custo com pelo menos 1 ponto"),
         columnId: z.uuid().optional()
     })

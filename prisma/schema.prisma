@@ -138,10 +138,17 @@ enum RoutinePeriod {
   ANNUAL
 }
 
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+}
+
 model Task {
   id              String   @id @default(uuid())
   title           String
   type            TaskType @default(RECURRENT)
+  status          TaskStatus @default(TODO)
   generatedPoints Int      @map("generated_points")
   isCompleted     Boolean  @default(false) @map("is_completed")
   createdAt       DateTime @default(now()) @map("created_at")
