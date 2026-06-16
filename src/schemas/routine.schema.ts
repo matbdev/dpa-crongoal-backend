@@ -23,10 +23,8 @@ export const updateRoutineSchema = z.object({
 
 export const addOrRemoveTaskToRoutineSchema = z.object({
     body: z.object({
+        routineId: z.uuid().min(1, 'O id da rotina é obrigatório'),
         taskId: z.uuid().min(1, 'O id da tarefa é obrigatório')
-    }),
-    params: z.object({
-        id: z.uuid().min(1, 'O id da rotina é obrigatório')
     })
 });
 

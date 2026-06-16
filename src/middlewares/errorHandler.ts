@@ -15,34 +15,47 @@ export const globalErrorHandler = (err: Error, req: Request, res: Response, next
     // Prisma: Record not found
     if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2025') {
         return res.status(404).json({
-            error: 'Resource not found'
+            error: 'Registro não encontrado'
         });
     }
 
     // Prisma: Unique constraint violation
     if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002') {
-        const target = (err.meta?.target as string[])?.join(', ') || 'field';
+        const target = (err.meta?.target as string[])?.join(', ') || '';
+        
+        let errorMessage = `Já existe um registro com esse valor.`;
+        
+        if (target.includes('projectId') && target.includes('title')) {
+            errorMessage = 'Já existe uma tarefa com esse nome dentro desse projeto';
+        } else if (target.includes('userId') && target.includes('name')) {
+            errorMessage = 'Já existe uma rotina com esse nome';
+        } else if (target.includes('userId') && target.includes('title')) {
+            errorMessage = 'Já existe um projeto com esse nome';
+        } else if (target.includes('email')) {
+            errorMessage = 'Este email já está em uso';
+        }
+
         return res.status(409).json({
-            error: `A record with this ${target} already exists`
+            error: errorMessage
         });
     }
 
     // Prisma: Foreign key constraint
     if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2003') {
         return res.status(400).json({
-            error: 'Invalid reference: the related record does not exist'
+            error: 'Referência inválida: o registro relacionado não existe'
         });
     }
 
     // Prisma: Validation error
     if (err instanceof Prisma.PrismaClientValidationError) {
         return res.status(400).json({
-            error: 'Invalid data format'
+            error: 'Dados inválidos'
         });
     }
 
     // Fallback: Unknown/unexpected error
     return res.status(500).json({
-        error: 'Internal server error'
+        error: 'Erro interno'
     });
 };

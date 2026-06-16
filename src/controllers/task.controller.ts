@@ -7,8 +7,9 @@ import { AppError } from '../utils/AppError';
 export const create = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const user = req.user as User;
-        const taskData = { ...req.body, userId: user.id };
-        const task = await TaskService.createTask(taskData);
+        const { routineId, ...restBody } = req.body;
+        const taskData = { ...restBody, userId: user.id };
+        const task = await TaskService.createTask(taskData, routineId);
 
         return res.status(201).json(task);
     } catch (error) {

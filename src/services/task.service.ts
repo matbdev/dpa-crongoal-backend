@@ -2,8 +2,36 @@ import { prisma } from '../config/prisma';
 import { Prisma } from '../../generated/prisma/client';
 
 // Create
-export const createTask = async (data: Prisma.TaskUncheckedCreateInput) => {
-    return await prisma.task.create({ data });
+export const createTask = async (data: Prisma.TaskUncheckedCreateInput, routineId?: string) => {
+    if (routineId) {
+        // Check for duplicates in the same routine
+        const existingRoutineTask = await prisma.routineTask.findFirst({
+            where: {
+                routineId,
+                task: {
+                    title: data.title
+                }
+            }
+        });
+        
+        if (existingRoutineTask) {
+            const { AppError } = await import('../utils/AppError');
+            throw new AppError('Já existe uma tarefa com esse título na rotina.', 409);
+        }
+    }
+
+    return await prisma.task.create({ 
+        data: {
+            ...data,
+            ...(routineId ? {
+                routineTasks: {
+                    create: {
+                        routineId
+                    }
+                }
+            } : {})
+        } 
+    });
 };
 
 // Get all tasks by user
