@@ -168,7 +168,7 @@ TASKS_JSON=(
   '{"title":"Meditar 10 minutos","type":"UNIQUE","generatedPoints":5,"description":"Meditação guiada ou silenciosa"}'
   '{"title":"Revisar pull requests","type":"RECURRENT","generatedPoints":12,"description":"Code review de PRs pendentes no time"}'
   '{"title":"Escrever testes unitários","type":"RECURRENT","generatedPoints":20,"description":"Cobrir funções críticas com testes"}'
-  '{"title":"Organizar mesa de trabalho","type":"RECURRENT","generatedPoints":3,"description":"Limpar e organizar workspace","status":"DONE"}'
+  '{"title":"Organizar mesa de trabalho","type":"RECURRENT","generatedPoints":3,"description":"Limpar e organizar workspace","status":"DONE","isCompleted":true}'
   '{"title":"Configurar CI/CD pipeline","type":"RECURRENT","generatedPoints":25,"description":"GitHub Actions para deploy automático","status":"IN_PROGRESS"}'
   '{"title":"Documentar API REST","type":"RECURRENT","generatedPoints":18,"description":"Swagger/OpenAPI para endpoints","status":"IN_PROGRESS"}'
   '{"title":"Refatorar módulo de autenticação","type":"RECURRENT","generatedPoints":30,"description":"Melhorar segurança e legibilidade"}'
@@ -178,7 +178,7 @@ TASKS_JSON=(
   '{"title":"Fazer backup do banco de dados","type":"RECURRENT","generatedPoints":8,"description":"pg_dump semanal"}'
   '{"title":"Estudar design patterns","type":"RECURRENT","generatedPoints":12,"description":"GoF patterns aplicados a TypeScript"}'
   '{"title":"Criar wireframe do dashboard","type":"RECURRENT","generatedPoints":20,"description":"Figma mockup do painel principal","status":"IN_PROGRESS"}'
-  '{"title":"Implementar dark mode","type":"RECURRENT","generatedPoints":18,"description":"CSS variables para tema escuro","status":"DONE"}'
+  '{"title":"Implementar dark mode","type":"RECURRENT","generatedPoints":18,"description":"CSS variables para tema escuro","status":"DONE","isCompleted":true}'
   '{"title":"Otimizar queries do Prisma","type":"RECURRENT","generatedPoints":22,"description":"Analisar e melhorar N+1 queries"}'
   '{"title":"Configurar monitoramento","type":"RECURRENT","generatedPoints":15,"description":"Sentry ou similar para error tracking","status":"IN_PROGRESS"}'
   '{"title":"Caminhar 30 minutos","type":"RECURRENT","generatedPoints":7,"description":"Caminhada ao ar livre"}'
@@ -205,7 +205,7 @@ TASKS_JSON=(
   '{"title":"Revisar backlog de bugs","type":"UNIQUE","generatedPoints":8,"description":"Classificar e limpar bugs antigos","status":"IN_PROGRESS"}'
   '{"title":"Criar apresentação de métricas","type":"UNIQUE","generatedPoints":15,"description":"Apresentação pro time executivo","status":"IN_PROGRESS"}'
   '{"title":"Pesquisar nova ferramenta de BI","type":"UNIQUE","generatedPoints":20,"description":"Analisar Metabase vs Superset"}'
-  '{"title":"Limpar arquivos temporários","type":"UNIQUE","generatedPoints":5,"description":"Limpeza de disco do ambiente dev","status":"DONE"}'
+  '{"title":"Limpar arquivos temporários","type":"UNIQUE","generatedPoints":5,"description":"Limpeza de disco do ambiente dev","status":"DONE","isCompleted":true}'
   '{"title":"Atualizar perfil no LinkedIn","type":"UNIQUE","generatedPoints":10,"description":"Adicionar novas certificações","status":"IN_PROGRESS"}'
 )
 
@@ -277,37 +277,42 @@ create_project() {
   fi
 }
 
+# IMPORTANTE: Os índices de tasks aqui NÃO devem se sobrepor com os das rotinas.
+# Rotinas usam: 0,1,2,3,4,5,6,10,12,13,14,19,20,21,22,23,25,26,31,32,33,35,37,39
+# Projetos usam: 7,8,9,15,16,17,18,24,27,28,29,34,36,38
+# Avulsas (sem projeto/rotina): 3,11,30,40,41,42,43,44
+
 create_project "Refatoração do Backend" \
   "Modernizar a arquitetura do backend com clean architecture" \
-  30  0 1 4 5 9
+  30  7 8 9 17
 
 create_project "Landing Page v2" \
   "Redesign completo da landing page com animações" \
-  45  6 15 16 38
+  45  15 16 38
 
 create_project "Infraestrutura DevOps" \
   "Configurar pipeline completo de CI/CD e monitoramento" \
-  60  7 8 18 36
+  60  18 36 29
 
 create_project "App Mobile React Native" \
   "Versão mobile do CronGoal" \
-  90  10 17 24 29 34
+  90  24 34 28
 
 create_project "Sistema de Notificações" \
   "Implementar notificações push e real-time" \
-  20  34 19 25
+  20  27 9 17
 
 create_project "Dashboard Analytics" \
   "Painel com métricas e gráficos de produtividade" \
-  40  38 29 27
+  40  38 7 29
 
 create_project "Módulo de Gamificação v2" \
   "Evolução do sistema de pontos e rewards" \
-  50  12 14 28
+  50  28 34 36
 
 create_project "Documentação Técnica" \
   "Documentar toda a API e guias de contribuição" \
-  35  8 21 26
+  35  8 9 27
 
 info "Total de projetos criados: ${#PROJECT_IDS[@]}"
 

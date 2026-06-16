@@ -135,7 +135,7 @@ async function main() {
             const createdAt = new Date(Date.now() - randomDays * 24 * 60 * 60 * 1000);
             await prisma.task.update({
                 where: { id: task.id },
-                data: { isCompleted: true, createdAt }
+                data: { isCompleted: true, status: 'DONE', createdAt }
             });
         }
         console.log(`Tasks Completed: marked ${shuffledCompleteTasks.length} tasks as completed.`);

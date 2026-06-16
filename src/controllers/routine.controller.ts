@@ -85,7 +85,7 @@ export const deleteRoutine = async (req: Request, res: Response, next: NextFunct
 export const addTask = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const user = req.user as User;
-        const routine = await RoutineService.addTaskToRoutine(req.params.id as string, req.body.taskId as string);
+        const routine = await RoutineService.addTaskToRoutine(req.body.routineId as string, req.body.taskId as string);
 
         return res.status(200).json(routine);
     } catch (error) {
@@ -97,7 +97,7 @@ export const addTask = async (req: Request, res: Response, next: NextFunction) =
 export const removeTask = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const user = req.user as User;
-        const routine = await RoutineService.removeTaskFromRoutine(req.params.id as string, req.body.taskId as string);
+        const routine = await RoutineService.removeTaskFromRoutine(req.body.routineId as string, req.body.taskId as string);
 
         return res.status(200).json(routine);
     } catch (error) {
