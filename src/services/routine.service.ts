@@ -27,7 +27,15 @@ export const createRoutine = async (data: Prisma.RoutineUncheckedCreateInput, ta
                 }
             })
         },
-        include: { routineTasks: true }
+        include: { 
+            routineTasks: {
+                include: { 
+                    task: {
+                        include: { registers: true }
+                    }
+                }
+            } 
+        }
     });
 
     // Mark tasks as RECURRENT when added to a routine
@@ -100,7 +108,15 @@ export const updateRoutine = async (id: string, userId: string, data: Prisma.Rou
                 }
             })
         },
-        include: { routineTasks: true }
+        include: { 
+            routineTasks: {
+                include: { 
+                    task: {
+                        include: { registers: true }
+                    }
+                }
+            } 
+        }
     });
 
     // Mark tasks as RECURRENT when added to a routine
