@@ -1,4 +1,6 @@
-# CronGoal - The open source goal tracking application, designed by/for you!
+> 🇺🇸 [View in English](README-en.md) · 🔗 [Ver Frontend](https://github.com/matbdev/dpa-crongoal-frontend)
+
+# CronGoal — Aplicação open source de acompanhamento de metas, feita por e para você!
 
 ![Node.js](https://img.shields.io/badge/Node%20js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
 ![Express.js](https://img.shields.io/badge/Express.js-404D59?style=for-the-badge&logo=express)
@@ -9,46 +11,39 @@
 ![Passport.js](https://img.shields.io/badge/Passport-34E27A?style=for-the-badge&logo=passport&logoColor=white)
 ![Zod](https://img.shields.io/badge/Zod-000000?style=for-the-badge&logo=zod&logoColor=3068B7)
 
-> [!NOTE]
-> This README is particularly focused on documenting the **Backend API** built natively with Express.js.
+> API backend completa que alimenta o ecossistema CronGoal — construída nativamente com Express.js + TypeScript, focada em performance, segurança e arquitetura desacoplada.
 
-## Summary
-- [Introduction](#introduction)
-- [Core Features](#core-features)
-- [Architecture & Tech Stack](#architecture--tech-stack)
-- [Project Structure](#project-structure)
-- [Getting Started](#getting-started)
-- [API Reference](#api-reference)
-- [Roadmap](#roadmap)
+---
 
-## Introduction
-Have you ever wanted to take control of your routine tasks, but never found a simple and intuitive way to do it? If your answer is _Yes_, you're exactly in the right place!
-Welcome to CronGoal, the open-source goal-tracking application designed with simplicity in mind!
+## O que é
 
-If you're tired of cluttered applications that demand more time configuring the tool than actually managing your goals, give this project a chance. This API powers the entire CronGoal ecosystem, ensuring blazing fast requests, solid security, and an incredibly strict yet decoupled backend architecture.
+O CronGoal é uma aplicação de produtividade pessoal gamificada que ajuda o usuário a organizar tarefas, rotinas e projetos de forma visual e intuitiva. A API deste repositório é o coração do sistema: ela gerencia toda a lógica de negócio, autenticação, persistência de dados e integração com serviços externos.
 
-## Core Features
-- **Intuitive Kanban Board System:** Manage your active goals with a flexible column structure mapped effectively via API.
-- **Time-Boxed Periods & Routines:** Set goals for specific timeframes and maintain daily routine registers.
-- **Gamification & Rewards:** Deep point-based system and reward redeem history to boost daily consistency and habit building.
-- **Secure Authentication:** Rock-solid security integrating Google OAuth 2.0 (Passport.js), traditional local login, JSON Web Tokens (JWT), and precise Role-Based Access Control (RBAC).
-- **Clean Architecture:** Fully scalable Service-Controller-Router layers eliminating monolithic handlers entirely.
+Se você já tentou tomar controle da sua rotina mas nunca encontrou uma ferramenta simples o suficiente para isso, esse projeto foi feito pra você. A proposta é eliminar a complexidade desnecessária e entregar uma experiência direta — sem ficar mais tempo configurando a ferramenta do que realmente gerenciando suas metas.
 
-## Architecture & Tech Stack
-This backend was intentionally migrated from NestJS to a custom, highly decoupled **Express.js + TypeScript** setup. The goal was to maximize structural control, maintain modern code organization, and wipe out unnecessary boilerplate while keeping an enterprise-level MVC standard.
+## Por que existe
 
-- **Routing Layer:** Express `Router` instances handling endpoint distribution with JWT protection boundaries.
-- **Controllers Layer:** Clean intermediation layer ensuring safe HTTP response mappings and error delegation.
-- **Services Layer:** Pure, unpolluted business logical rules and Prisma Database transactions.
-- **Middlewares:** Automated JWT payload parsing (`req.user`), RBAC constraints (`requireAdmin`), generic Centralized Error Handler, Helmet web-security, and flexible API Rate Limiting.
+Esse projeto nasceu dentro da disciplina de **Desenvolvimento de Aplicações para a Internet (DAI)** na **UNIVATES**, mas vai além de uma entrega acadêmica. A motivação real veio da frustração com ferramentas de produtividade que ou são simples demais e não sustentam uso real, ou são tão complexas que viram um obstáculo a mais.
 
-## Project Structure
+O CronGoal preenche esse espaço: é robusto o bastante para acompanhar projetos com Kanban, rotinas periódicas e um sistema de recompensas gamificado — mas sem exigir do usuário uma curva de aprendizado absurda. A ideia é que ele funcione como um aliado no dia a dia, não como mais uma obrigação.
+
+## Como funciona
+
+- **Linguagem principal:** TypeScript
+- **Framework / Runtime:** Express.js 5 sobre Node.js
+- **Banco de dados:** PostgreSQL 16 (via Docker) com Prisma ORM e Supabase como solução de Bucket de armazenamento
+- **Autenticação:** Google OAuth 2.0 (Passport.js) + login local com bcrypt + JWT
+- **Validação:** Zod para todos os endpoints de mutação
+- **Segurança:** Helmet, CORS configurável, Rate Limiting, RBAC (admin middleware)
+- **Arquitetura:** Camadas Service → Controller → Router totalmente desacopladas, sem handlers monolíticos
+
+### Estrutura do projeto
 
 ```
 src/
-├── config/                     # Environment and database configuration
-│   └── prisma.ts               # Prisma Client singleton instance
-├── controllers/                # HTTP request handlers (translate req/res)
+├── config/                     # Configuração de ambiente e banco
+│   └── prisma.ts               # Instância singleton do Prisma Client
+├── controllers/                # Handlers HTTP (traduzem req/res)
 │   ├── auth.controller.ts
 │   ├── kanbanColumn.controller.ts
 │   ├── project.controller.ts
@@ -56,12 +51,12 @@ src/
 │   ├── routine.controller.ts
 │   ├── task.controller.ts
 │   └── user.controller.ts
-├── middlewares/                # Express middleware pipeline
-│   ├── errorHandler.ts         # Global error handler (AppError, Prisma errors)
-│   ├── requireAdmin.ts         # RBAC: blocks non-admin users
-│   ├── requireJwt.ts           # JWT authentication guard
-│   └── validateData.ts         # Zod schema validation middleware
-├── routes/                     # Endpoint definitions and middleware chaining
+├── middlewares/                # Pipeline de middlewares Express
+│   ├── errorHandler.ts         # Handler global de erros (AppError, Prisma)
+│   ├── requireAdmin.ts         # RBAC: bloqueia não-admins
+│   ├── requireJwt.ts           # Guard de autenticação JWT
+│   └── validateData.ts         # Middleware de validação Zod
+├── routes/                     # Definição de endpoints e encadeamento
 │   ├── auth.route.ts
 │   ├── health.route.ts
 │   ├── kanbanColumn.route.ts
@@ -70,7 +65,7 @@ src/
 │   ├── routine.route.ts
 │   ├── task.route.ts
 │   └── user.route.ts
-├── schemas/                    # Zod validation schemas (DTOs)
+├── schemas/                    # Schemas de validação Zod (DTOs)
 │   ├── auth.schema.ts
 │   ├── kanban.schema.ts
 │   ├── project.schema.ts
@@ -78,7 +73,7 @@ src/
 │   ├── routine.schema.ts
 │   ├── task.schema.ts
 │   └── user.schema.ts
-├── services/                   # Business logic and Prisma queries
+├── services/                   # Regras de negócio e queries Prisma
 │   ├── auth.service.ts
 │   ├── kanbanColumn.service.ts
 │   ├── project.service.ts
@@ -86,220 +81,88 @@ src/
 │   ├── routine.service.ts
 │   ├── task.service.ts
 │   └── user.service.ts
-├── strategies/                 # Passport.js authentication strategies
-│   ├── google.ts               # Google OAuth 2.0 strategy
-│   ├── jwt.ts                  # JWT Bearer strategy
-│   └── passport.ts             # Strategy registration
-├── types/                      # Custom TypeScript type definitions
+├── strategies/                 # Estratégias de autenticação Passport.js
+│   ├── google.ts               # Estratégia Google OAuth 2.0
+│   ├── jwt.ts                  # Estratégia JWT Bearer
+│   └── passport.ts             # Registro de estratégias
+├── types/                      # Definições de tipos TypeScript
 │   └── jwtPayload.ts
-├── utils/                      # Shared utility functions and helpers
-│   ├── AppError.ts             # Custom error class with HTTP status codes
-│   ├── cors.ts                 # CORS configuration
-│   ├── jwt.ts                  # JWT token generation
-│   ├── password.ts             # Bcrypt hashing utilities
-│   └── rateLimiter.ts          # Rate limiting configuration
-└── app.ts                      # Express application entry point
+├── utils/                      # Funções utilitárias compartilhadas
+│   ├── AppError.ts             # Classe de erro customizada com HTTP status
+│   ├── cors.ts                 # Configuração CORS
+│   ├── jwt.ts                  # Geração de tokens JWT
+│   ├── password.ts             # Utilitários de hashing bcrypt
+│   └── rateLimiter.ts          # Configuração de Rate Limiting
+└── app.ts                      # Entry point da aplicação Express
 ```
 
-## Getting Started
+## Como rodar localmente
 
-### Prerequisites
+### Pré-requisitos
 
-- [Node.js](https://nodejs.org/) (v18+)
-- [PostgreSQL](https://www.postgresql.org/) running locally or via [Docker](https://www.docker.com/)
-- A [Google Cloud Console](https://console.cloud.google.com/) project with OAuth 2.0 credentials (for Google login)
+- [Node.js](https://nodejs.org/) v18+
+- [Docker](https://www.docker.com/) (para subir o PostgreSQL em container)
+- Um projeto no [Google Cloud Console](https://console.cloud.google.com/) com credenciais OAuth 2.0 (para login via Google)
 
-### 1. Clone the repository
+### Passos
+
 ```bash
-git clone https://github.com/your-username/dpa-crongoal-backend.git
+# 1. Clonar o repositório
+git clone https://github.com/matbdev/dpa-crongoal-backend.git
 cd dpa-crongoal-backend
-```
 
-### 2. Install dependencies
-```bash
+# 2. Instalar dependências
 npm install
-```
 
-### 3. Configure environment variables
+# 3. Configurar variáveis de ambiente
+cp .env.template .env
+# Edite o .env com suas credenciais reais
 
-Create a `.env` file in the root directory:
-```env
-# Database
-DATABASE_URL="postgresql://user:password@localhost:5432/crongoal"
+# 4. Subir o banco de dados via Docker
+docker compose up -d
 
-# JWT
-JWT_SECRET="your-secret-key-here"
-
-# Google OAuth 2.0
-GOOGLE_CLIENT_ID="your-google-client-id"
-GOOGLE_CLIENT_SECRET="your-google-client-secret"
-GOOGLE_CALLBACK_URL="http://localhost:5000/api/auth/google/callback"
-
-# Frontend URL (for CORS)
-FE_BASE_URL="http://localhost:3000"
-
-# Backend URL
-BE_BASE_URL="http://localhost:5000"
-
-# Server
-PORT=5000
-```
-
-### 4. Setup the database
-```bash
-# Generate Prisma Client
+# 5. Gerar o Prisma Client e rodar migrações
 npx prisma generate
-
-# Run migrations
 npx prisma migrate dev
-```
 
-### 5. Run the development server
-```bash
+# 6. Iniciar o servidor de desenvolvimento
 npm run dev
 ```
 
-The API will be available at `http://localhost:5000`. You can verify it by hitting the health endpoint:
-```
-GET http://localhost:5000/api/health
-```
+Depois abre `http://localhost:5000/api/health` no navegador ou via cURL para verificar que está rodando.
 
-## API Reference
+## Demonstração
 
-> All routes (except Auth and Health) require a JWT Bearer token: `Authorization: Bearer <token>`
+Como este repositório contém apenas a API backend, as demonstrações visuais (screenshots, GIFs e vídeos) estão disponíveis no README do frontend:
 
-<details>
-<summary><strong>Auth</strong> — <code>/api/auth</code> (Public)</summary>
+👉 [**Ver demonstração no repositório do Frontend**](https://github.com/matbdev/dpa-crongoal-frontend#demonstra%C3%A7%C3%A3o)
 
-| Method | Endpoint | Description | Body |
-|:--|:--|:--|:--|
-| `GET` | `/google` | Redirects to Google OAuth consent screen | — |
-| `GET` | `/google/callback` | Google callback, returns JWT | — |
-| `POST` | `/login` | Local login | `{ email, password }` |
-| `POST` | `/register` | Create account | `{ email, password (min 8, no sequential numbers, no name parts), fullName }` |
+## Decisões técnicas
 
-</details>
+- **Express.js custom em vez de NestJS:** O backend foi intencionalmente migrado de NestJS para um setup Express.js + TypeScript altamente desacoplado. A motivação foi ter controle total sobre a estrutura, manter a organização moderna sem boilerplate desnecessário, e preservar um padrão MVC enterprise-level. O NestJS resolve muito, mas quando você quer entender e controlar cada camada, construir na mão compensa.
 
-<details>
-<summary><strong>User</strong> — <code>/api/user</code></summary>
+- **Zod em vez de class-validator:** A escolha pelo Zod veio da integração natural com TypeScript (inferência de tipos) e da capacidade de validar schemas complexos com composição. Cada endpoint de mutação tem seu schema próprio, centralizado na pasta `schemas/`.
 
-| Method | Endpoint | Description | Body |
-|:--|:--|:--|:--|
-| `GET` | `/` | Get authenticated user's profile | — |
-| `PUT` | `/` | Update profile | `{ displayName?, picUrl?, theme? (DARK/LIGHT) }` |
-| `DELETE` | `/` | Delete account (cascade) | — |
-| `GET` | `/admin/all` | List all users (**ADMIN only**) | — |
+- **Prisma ORM:** Facilita as migrações e a tipagem automática dos modelos. O schema declarativo (`schema.prisma`) funciona como documentação viva do banco de dados. Também é uma medida de segurança, pois previne erros de digitação, SQL Injection e garante a integridade dos dados.
 
-</details>
+- **Gamificação como feature de primeira classe:** O sistema de pontos e recompensas não foi um "nice to have" — foi projetado desde o início como parte central da experiência. Cada tarefa concluída gera pontos; cada recompensa resgatada deduz pontos. O histórico de resgates é rastreado por completo.
 
-<details>
-<summary><strong>Project</strong> — <code>/api/project</code></summary>
+- **Separação rígida de camadas:** Routes só encadeiam middlewares. Controllers só traduzem HTTP. Services contêm toda a lógica de negócio e transações Prisma. Isso facilita testes, manutenção e futuras migrações.
 
-| Method | Endpoint | Description | Body |
-|:--|:--|:--|:--|
-| `GET` | `/` | List user's projects | — |
-| `GET` | `/count` | Get total number of projects | — |
-| `POST` | `/` | Create project | `{ title (min 3), description?, limitDate (future) }` |
-| `GET` | `/:id` | Get project by ID | — |
-| `PUT` | `/:id` | Update project (all fields optional) | Same as create |
-| `DELETE` | `/:id` | Delete project (cascade) | — |
+## Próximos passos
 
-</details>
+- [ ] Testes E2E para todos os fluxos críticos
+- [ ] Paginação (`skip`/`take`) em listagens
+- [ ] Logging estruturado
+- [ ] Deploy em produção com CI/CD
 
-<details>
-<summary><strong>Task</strong> — <code>/api/task</code></summary>
+## Sobre
 
-| Method | Endpoint | Description | Body |
-|:--|:--|:--|:--|
-| `GET` | `/` | List user's tasks | — |
-| `GET` | `/count` | Get total number of tasks | — |
-| `GET` | `/daily` | List daily completion registers | — |
-| `POST` | `/` | Create task | `{ title, description?, type (UNIQUE/RECURRENT), generatedPoints (int ≥1), columnId? }` |
-| `POST` | `/daily` | Register daily completion | `{ taskId, isDone?, obs? }` |
-| `PUT` | `/move` | Move task to column | `{ id (task), newColumnId }` |
-| `GET` | `/:id` | Get task by ID | — |
-| `PUT` | `/:id` | Update task (all fields optional) | Same as create |
-| `DELETE` | `/:id` | Delete task | — |
+Feito por **Mateus Carniel Brambilla** ([@matbdev](https://github.com/matbdev))
+durante a disciplina de Desenvolvimento de Aplicações para a Internet (DAI) na UNIVATES.
 
-</details>
+Submetido ao [`git show 2026`](https://jeferson-scheibler.github.io/git-show-dati/),
+iniciativa do Diretório Acadêmico de Tecnologia da Informação (DATI)
+da UNIVATES.
 
-<details>
-<summary><strong>Kanban</strong> — <code>/api/kanban</code></summary>
-
-| Method | Endpoint | Description | Body |
-|:--|:--|:--|:--|
-| `GET` | `/project/:projectId` | List columns by project | — |
-| `POST` | `/` | Create column | `{ name, order (≥0), projectId, color? }` |
-| `GET` | `/:id` | Get column by ID | — |
-| `PUT` | `/:id` | Update column (all fields optional) | Same as create |
-| `DELETE` | `/:id` | Delete column | — |
-
-</details>
-
-<details>
-<summary><strong>Reward</strong> — <code>/api/reward</code></summary>
-
-| Method | Endpoint | Description | Body |
-|:--|:--|:--|:--|
-| `GET` | `/` | List user's rewards | — |
-| `GET` | `/count` | Get total number of rewards | — |
-| `GET` | `/redeems` | List all user's redeem history | — |
-| `POST` | `/` | Create reward | `{ title (min 3), description?, pointsToGet (int ≥1), icon? }` |
-| `GET` | `/:id` | Get reward by ID (includes redeems) | — |
-| `GET` | `/:id/redeems` | List redeems for a reward | — |
-| `POST` | `/:id/redeem` | Redeem reward (deducts points) | `{ spentPoints (int ≥1) }` |
-| `PUT` | `/:id` | Update reward (all fields optional) | Same as create |
-| `DELETE` | `/:id` | Delete reward | — |
-
-</details>
-
-<details>
-<summary><strong>Routine</strong> — <code>/api/routine</code></summary>
-
-| Method | Endpoint | Description | Body |
-|:--|:--|:--|:--|
-| `GET` | `/` | List user's routines | — |
-| `GET` | `/count` | Get total number of routines | — |
-| `POST` | `/` | Create routine | `{ name (min 3), description? }` |
-| `GET` | `/:id` | Get routine by ID (includes tasks) | — |
-| `PUT` | `/:id` | Update routine (all fields optional) | Same as create |
-| `POST` | `/task` | Add task to routine | `{ taskId }` + params `{ id (routine) }` |
-| `DELETE` | `/task` | Remove task from routine | `{ taskId }` + params `{ id (routine) }` |
-| `DELETE` | `/:id` | Delete routine | — |
-
-</details>
-
-<details>
-<summary><strong>Health</strong> — <code>/api/health</code> (Public)</summary>
-
-| Method | Endpoint | Description |
-|:--|:--|:--|
-| `GET` | `/` | Returns `{ status, message, timestamp }` |
-
-</details>
-
-### Error Responses
-
-| Status | When |
-|:--|:--|
-| `400` | Invalid data, foreign key constraint, or insufficient points |
-| `401` | Missing or invalid JWT |
-| `403` | Requires ADMIN role |
-| `404` | Resource not found |
-| `409` | Duplicate record (unique constraint) |
-| `500` | Internal server error |
-
-## Roadmap
-- [x] **Phase 1:** Project scaffolding, Express + TypeScript setup, and `src/` directory architecture
-- [x] **Phase 2:** PostgreSQL database modeling with Prisma ORM (entities, enums, relationships, cascades)
-- [x] **Phase 3:** Authentication system (Google OAuth 2.0 via Passport.js, local login/register, JWT generation)
-- [x] **Phase 4:** Full REST API implementation (Services, Controllers, and Routes for all entities)
-- [x] **Phase 5:** Zod schema validation on all mutation/param endpoints
-- [x] **Phase 6:** Security hardening (Helmet, CORS, Rate Limiting, RBAC admin middleware)
-- [x] **Phase 7:** Centralized error handling with AppError class and Prisma error differentiation
-- [ ] **Phase 8:** E2E testing
-- [ ] **Phase 9:** Pagination (`skip`/`take`)
-- [ ] **Phase 10:** Structured logging (Winston/Morgan)
-
----
-**If you like what you see here, give it a ⭐️ and follow me for future updates and projects!**
+[![git show 2026](https://img.shields.io/badge/git_show-2026-79f2c5?style=flat-square&labelColor=000000)](https://jeferson-scheibler.github.io/git-show-dati/)
