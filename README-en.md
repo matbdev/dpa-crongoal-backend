@@ -1,4 +1,4 @@
-> 🇧🇷 [Ver em Português](README.md) · 🔗 [View Frontend](https://github.com/matbdev/dpa-crongoal-frontend/blob/main/README-en.md)
+> 🇧🇷 [Ver em Português](README.md) · 🔗 [View Frontend](https://github.com/matbdev/dai-crongoal-frontend/blob/main/README-en.md)
 
 # CronGoal — Open source goal tracking application, designed by/for you!
 
@@ -108,8 +108,8 @@ src/
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/matbdev/dpa-crongoal-backend.git
-cd dpa-crongoal-backend
+git clone https://github.com/matbdev/dai-crongoal-backend.git
+cd dai-crongoal-backend
 
 # 2. Install dependencies
 npm install
@@ -135,7 +135,7 @@ Then open `http://localhost:5000/api/health` in your browser or via cURL to veri
 
 Since this repository contains only the backend API, visual demos (screenshots, GIFs, and videos) are available in the frontend README:
 
-👉 [**View demo in the Frontend repository**](https://github.com/matbdev/dpa-crongoal-frontend/blob/main/README-en.md#demo)
+👉 [**View demo in the Frontend repository**](https://github.com/matbdev/dai-crongoal-frontend/blob/main/README-en.md#demo)
 
 ## Technical decisions
 
